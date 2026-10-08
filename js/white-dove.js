@@ -18,7 +18,7 @@
     list.forEach(r => {
       const o = occ[r.id];
       box.append(h("div", { class: "card room " + (o ? "busy" : "free"), id: "room-" + r.id },
-        h("span", { class: "n" }, r.id), h("small", {}, r.type + " · " + PH.price(r)),
+        h("div", { class: "rm" }, PH.pic(["assets/img/room-" + r.id + ".jpg", "assets/img/room-" + r.type.toLowerCase() + ".jpg", "assets/img/stock/" + (r.type === "Deluxe" ? "hotel-room2" : "hotel-room") + ".svg"], r.type + " room " + r.id)), h("span", { class: "n" }, r.id), h("small", {}, r.type + " · " + PH.price(r)),
         PH.badge(o ? "busy" : "", o ? "Occupied" : "Available"),
         o ? h("small", {}, o.until ? "Expected free: " + PH.fmt(o.until) : "") : h("button", { class: "btn btn-sm", onclick: () => { preselect = r.id; tab = "in"; form(); $("#panel").scrollIntoView({ behavior: "smooth", block: "start" }); } }, "Request room")));
     });

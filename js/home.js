@@ -13,12 +13,11 @@
   }
   status(); PH.on(status);
 
-  const photos = [["Entrance", "30% 60%", "tall"], ["Courtyard", "50% 90%"], ["Brick wall", "85% 55%"], ["Doorway", "35% 55%"], ["Planter", "80% 85%"], ["Canopy", "50% 8%"]];
+  const photos = [["Hotel by night", "hotel-night", "tall"], ["Lobby", "hotel-lobby"], ["Cocktail bar", "bar"], ["Chess night", "chess"], ["Poolside", "pool"], ["Apartment kitchen", "apt-kitchen"], ["Apartment bedroom", "apt-bedroom"]];
   const g = $("#gallery");
-  photos.forEach(p => {
-    const img = h("img", { src: "assets/img/property.jpg", alt: p[0] + " at Parah Hospitality", loading: "lazy", style: "object-position:" + p[1] });
-    img.addEventListener("error", () => img.replaceWith(h("div", { class: "ph-img" })));
-    g.append(h("button", { class: p[2] || "", "aria-label": "Enlarge photo: " + p[0], onclick: () => PH.modal(p[0], h("img", { src: "assets/img/property.jpg", alt: p[0] })) }, img));
+  photos.forEach((p, i) => {
+    const img = PH.pic(["assets/img/gallery-" + (i + 1) + ".jpg", "assets/img/stock/" + p[1] + ".svg"], p[0] + " at Parah Hospitality");
+    g.append(h("button", { class: p[2] || "", "aria-label": "Enlarge photo: " + p[0], onclick: () => PH.modal(p[0], PH.pic([img.currentSrc || img.src], p[0])) }, img, h("span", { class: "cap" }, p[0])));
   });
 
   $("#contact-list").append(

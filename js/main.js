@@ -41,8 +41,29 @@
     if (!$("#toasts")) document.body.append(h("div", { id: "toasts", "aria-live": "polite" }));
     const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 }) : null;
     PH.$$(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
-    PH.$$("img[data-fallback]").forEach(img => img.addEventListener("error", () => img.replaceWith(h("div", { class: "ph-img", role: "img", "aria-label": img.alt || "" }))));
+    PH.$$("img[data-chain]").forEach(img => PH.chain(img, img.dataset.chain.split("|")));
   }
+
+  /* Real photographs from Unsplash (free to use under the Unsplash License) used for the demo.
+     key -> [Unsplash photo id, illustration fallback]. Replace by adding your own files to assets/img/. */
+  PH.STOCK = {
+    "hotel-exterior": ["1455587734955-081b22074882", "hotel-exterior"], "hotel-night": ["1542314831-068cd1dbfeeb", "hotel-exterior"],
+    "hotel-lobby": ["1759038085950-1234ca8f5fed", "hotel-lobby"], "hotel-room": ["1618773928121-c32242e63f39", "hotel-room"],
+    "hotel-room2": ["1611892440504-42a792e24d32", "hotel-room2"], "apt-bedroom": ["1631049421450-348ccd7f8949", "apt-bedroom"],
+    "apt-living": ["1618221195710-dd6b41faaea6", "apt-living"], "apt-kitchen": ["1622372738946-62e02505feb3", "apt-kitchen"],
+    "apt-exterior": ["1535827841776-24afc1e255ac", "apt-exterior"], "bar": ["1718184139636-7bb9ebcd1e08", "bar"],
+    "tea-set": ["1715017245474-5533582014a3", "tea-set"], "chess": ["1585038021831-8afd9f9ab27f", "chess"],
+    "lounge-interior": ["1641924676093-42e61835bbe2", "lounge-interior"], "pool": ["1551882547-ff40c63fe5fa", "lounge-interior"]
+  };
+  const expand = urls => [].concat.apply([], urls.map(u => { const k = (u.match(/stock\/([\w-]+)\.svg$/) || [])[1], s = k && PH.STOCK[k];
+    return s ? ["https://images.unsplash.com/photo-" + s[0] + "?auto=format&fit=crop&w=1400&q=75", "assets/img/stock/" + s[1] + ".svg"] : [u]; }));
+  /* Image with fallbacks: tries each URL in turn (your own photo first, then the built-in illustration), then a warm placeholder. */
+  PH.chain = function (img, urls) {
+    urls = expand(urls); let i = 0;
+    img.addEventListener("error", function f() { i++; if (i < urls.length) { img.src = urls[i]; return; } img.removeEventListener("error", f); img.replaceWith(h("div", { class: "ph-img", role: "img", "aria-label": img.alt || "" })); });
+    img.src = urls[0];
+  };
+  PH.pic = function (urls, alt, attrs) { const img = h("img", Object.assign({ alt: alt, loading: "lazy" }, attrs)); PH.chain(img, urls); return img; };
 
   PH.toast = function (msg, type) {
     const t = h("div", { class: "toast " + (type || "ok"), role: "status" }, msg);

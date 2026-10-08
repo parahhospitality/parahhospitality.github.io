@@ -1,5 +1,6 @@
 (function (PH) {
   const $ = PH.$, h = PH.h, C = PH.config, db = PH.db;
+  const GIMG = { "table tennis": "table-tennis", "chess": "chess", "ludo": "ludo", "dice games": "dice" };
   function draw() {
     const l = db.lounge(), s = PH.tablesSummary();
     $("#t-free").textContent = s.free; $("#t-occ").textContent = s.occupied;
@@ -8,8 +9,8 @@
       tb.append(h("div", { class: "card tbl " + (o ? "busy" : "free") }, h("span", { class: "n" }, i), h("small", {}, "Table"), h("div", {}, PH.badge(o ? "busy" : "", o ? "Occupied" : "Free")))); }
     const list = (id, items, key, on, off) => { const box = $(id); box.textContent = "";
       items.forEach(it => { const bad = l[key][it.name];
-        box.append(h("div", { class: "card item" + (bad ? " off" : "") }, h("div", {}, h("h4", {}, it.name), h("p", {}, it.desc)), PH.badge(bad ? "muted" : "", bad ? off : on))); }); };
-    list("#tea", C.tea, "tea", "Available", "Sold out");
+        const k = GIMG[it.name.toLowerCase()]; box.append(h("div", { class: "card item" + (bad ? " off" : "") }, k ? h("div", { class: "thumb" }, PH.pic(["assets/img/game-" + k + ".jpg", "assets/img/stock/" + k + ".svg"], it.name)) : null, h("div", { class: "grow" }, h("h4", {}, it.name), h("p", {}, it.desc)), PH.badge(bad ? "muted" : "", bad ? off : on))); }); };
+    list("#tea-list", C.tea, "tea", "Available", "Sold out");
     list("#games", C.games, "games", "Free", "In use");
     const t = PH.today(), booked = l.hall.filter(x => x.date >= t).map(x => x.date).sort();
     $("#hall-status").textContent = ""; $("#hall-status").append(PH.badge(booked[0] === t ? "busy" : "", booked[0] === t ? "Booked today" : "Free today"));
